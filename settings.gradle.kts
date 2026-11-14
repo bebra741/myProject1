@@ -1,17 +1,17 @@
 pluginManagement {
-  repositories {
-    google()
-    mavenCentral()
-    GradlePluginPortal()
-  }
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
 }
-deperdencyResolutionManagement {
-  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-  repositories {
-    google()
-    mavenCentral()
-  }
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
-rootProjetc.name = "myProject1"
-include(".app")
+rootProject.name = "MyAndroidApp"
+include(":app")
     
