@@ -1,64 +1,73 @@
-package com.example.myandroidapp
-
+import android.content.Context
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.DashPathEffect
+import android.graphics.Paint
 import android.os.Bundle
-import android.view.Gravity
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-
+import android.view.MotionEvent
+import android.view.View
+import android.appcompat.app.AppCompatActivity
+import kotlin.math.abs
+import kotlin.random.Random
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // 1. Создаем корневой контейнер (LinearLayout) прямо в коде
-        val rootLayout = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER
-            setPadding(32, 32, 32, 32)
-            setBackgroundColor(Color.WHITE)
-        }
-
-        // 2. Создаем текстовую надпись
-        val textViewTitle = TextView(this).apply {
-            text = "Привет, мир!"
-            textSize = 24f
-            setTextColor(Color.BLACK)
-            gravity = Gravity.CENTER
-        }
-
-        // 3. Создаем кнопку
-        val buttonChangeText = Button(this).apply {
-            text = "Изменить текст"
-            isAllCaps = false
-        }
-
-        // 4. Добавляем отступ между надписью и кнопкой
-        val params = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply {
-            bottomMargin = 32
-        }
-        textViewTitle.layoutParams = params
-
-        // 5. Собираем всё вместе в единый экран
-        rootLayout.addView(textViewTitle)
-        rootLayout.addView(buttonChangeText)
-
-        // 6. Устанавливаем созданный контейнер как главный экран активности
-        setContentView(rootLayout)
-
-        // 7. Логика нажатия на кнопку (меняем текст)
-        var isChanged = false
-        buttonChangeText.setOnClickListener {
-            if (isChanged) {
-                textViewTitle.text = "Привет, мир!"
-            } else {
-                textViewTitle.text = "Текст успешно изменен!"
-            }
-            isChanged = !isChanged
-        }
+        setContentView(PongView(this))
     }
 }
+class PongView(context: Context) : View(context) {
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = color.DKGRAY
+        strokeWidth = 6f
+        style = Paint.Style.STROKE
+        pathEffect = DashPathEffect(floatArray(25f,25f), 0f) }
+    private val ballX = 0f
+    private val ballY = 0f
+    private val ballVx = 0f
+    private val ballVy = 0f
+    private val ballRadius = 22f
+    private val paddleWidth = 240f
+    private val paddleHeight = 32f
+    private val playerX = 0f
+    private val aiX = 0f
+    private val aiSpeed = 11f
+    private val playerScore = 0
+    private val aiScore = 0
+    private val isInitialized = false
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w,h,oldw,oldh)
+        if (!isInitialized && w > 0 && h > 0) {
+            playerX = (w - paddleWidth) / 2f
+            aiX = (w - paddleWidth) / 2f
+            resetBall(w, h)
+            isInitialized = true}}
+    private fun resetBall(w: Int, h: Int) {
+        ballX = w / 2f
+        ballY = h / 2f
+        val dirX = if (Random.nextBoolean()) 1f else -1f
+        val dirY = if (Random.nextBoolean()) 1f else -1f
+        ballVx = 10f * dirX
+        ballVy = 13f * dirY }
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        if (!isInitialized) return
+        canvas.drawColor(Color.parseColor("#87CEFA"))
+        canvas.drawLine(0f, height / 2f, width.toFloat(), height / 2f,linePaint)
+        updateGame()
+        paint.color = Color.WHITE
+        paint.textSize =90f
+        paint.textAlgin = Paint.Algin.LEFT
+        canvas.drawText(aiScore.toString(), 60f, height / 2f - 50f, paint)
+        canvas.drawText(playerScore.toString(), 60f, height / 2f + 115f, paint)
+        val aiTop = 90f
+        val playerTop = height - 80f - paddleHeight
+        paint.color = color.parseColor("#FF5252")
+        canvas.drawRoundRect(aiX, aiTop, aiX + paddleWidth, aiTop + paddleHeight, 16f, 16f, paint)
+        paint.color = Color.parseColor("#448AFF")
+    
+            
+  
+
+
+
